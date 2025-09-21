@@ -39,28 +39,38 @@ class HiggsToInvisibleProcessor(processor.ProcessorABC):
     def postprocess(self, accumulator):
         return accumulator
 
+from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
+from pathlib import Path
+
 def run_analysis(files):
     """
-    Run the Higgs to Invisible analysis.
+    Run the analysis on one or more ROOT files.
+    files can be:
+      - a string or Path to a single file
+      - a list of strings/Paths with multiple files
     """
-    # Load events from files
-    events = NanoEventsFactory.from_root(
-        files,
-        schema=NanoAODSchema
-    ).events()
     
-    # Create processor
-    proc = HiggsToInvisibleProcessor()
-    
-    # Run
-    result = processor.run_uproot_job(
-        files,
-        treename="Events",
-        processor_instance=proc,
-        executor=processor.futures_executor,
-        executor_args={"workers": 4, "flatten": True},
-    )
-    return result
+    # Normalize to list
+    if isinstance(files, (str, Path)):
+        files = [files]
+    elif not isinstance(files, (list, tuple)):
+        raise TypeError(f"files must be str, Path, or list of them, got {type(files)}")
+
+    all_events = []
+    for f in files:
+        events = NanoEventsFactory.from_root(
+            str(f),
+            treepath="Events",  # adjust to match your tree name
+            schemaclass=NanoAODSchema
+        ).events()
+        all_events.append(events)
+
+    # If just one file, return directly
+    if len(all_events) == 1:
+        return all_events[0]
+    else:
+        return all_events  # list of NanoEvents
+
 
 if __name__ == "__main__":
     files = ["path/to/your/file.root"]  # replace with your files
