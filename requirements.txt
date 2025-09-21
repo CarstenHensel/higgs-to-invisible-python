@@ -1,0 +1,5 @@
+coffea>=0.8
+uproot>=6.5
+awkward>=2.0
+numpy
+matplotlib
