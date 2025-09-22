@@ -1,14 +1,27 @@
-# Muon channel
-z_mass_min_mm: 80.0
-z_mass_max_mm: 100.0
-met_min_mm: 100.0
+# ================================
+# Muon channel (μμ)
+# ================================
+z_mass_min_mm: 80.0       # GeV, lower edge of Z mass window
+z_mass_max_mm: 100.0      # GeV, upper edge of Z mass window
+met_min_mm: 100.0         # GeV, minimum MET for SR
 
-# Electron channel
-z_mass_min_ee: 80.0
-z_mass_max_ee: 100.0
-met_min_ee: 100.
-  
-# Jet-jet channel
-mjj_min: 70.0
-mjj_max: 110.0
-met_min_jj: 100.00
+# ================================
+# Electron channel (ee)
+# ================================
+z_mass_min_ee: 80.0       # GeV
+z_mass_max_ee: 100.0      # GeV
+met_min_ee: 100.0         # GeV
+
+# ================================
+# Jet-jet channel (jj)
+# ================================
+mjj_min: 70.0             # GeV, lower edge of dijet mass window
+mjj_max: 110.0            # GeV, upper edge of dijet mass window
+met_min_jj: 100.0         # GeV
+pt_min_jets: 30.0         # GeV, min jet pT for selection
+eta_max_jets: 4.5         # max |eta| for jets
+
+# ================================
+# General / future extensions
+# ================================
+# Can add optional cuts for acoplanarity, Δφ(jet,MET), b-tagging, etc.
