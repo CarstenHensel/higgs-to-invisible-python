@@ -1,3 +1,9 @@
-z_mass_min: 80.0
-z_mass_max: 100.0
-met_min: 100.0
+# Muon channel
+z_mass_min_mm: 80.0
+z_mass_max_mm: 100.0
+met_min_mm: 100.0
+
+# Electron channel
+z_mass_min_ee: 80.0
+z_mass_max_ee: 100.0
+met_min_ee: 100.0
