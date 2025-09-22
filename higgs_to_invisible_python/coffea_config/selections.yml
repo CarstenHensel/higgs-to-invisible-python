@@ -6,4 +6,9 @@ met_min_mm: 100.0
 # Electron channel
 z_mass_min_ee: 80.0
 z_mass_max_ee: 100.0
-met_min_ee: 100.0
+met_min_ee: 100.
+  
+# Jet-jet channel
+mjj_min: 70.0
+mjj_max: 110.0
+met_min_jj: 100.00
