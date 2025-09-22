@@ -1,15 +1,12 @@
-# higgs_to_invisible/processors/counting_processor.py
-
 import awkward as ak
-import numpy as np
 from coffea.processor import ProcessorABC, dict_accumulator
-
-from higgs_to_invisible.utils.objects import select_muons, select_jets, compute_met
+from higgs_to_invisible.utils.objects import select_muons, select_electrons, select_jets
 
 class CountingProcessor(ProcessorABC):
-    def __init__(self, lumi, xsecs):
+    def __init__(self, lumi, xsecs, selection_cfg):
         self._lumi = lumi
         self._xsecs = xsecs
+        self._sel = selection_cfg
         self._accumulator = dict_accumulator({
             "cutflow": dict_accumulator(),
             "yields": dict_accumulator(),
@@ -21,23 +18,23 @@ class CountingProcessor(ProcessorABC):
 
     def process(self, events):
         dataset = events.metadata["dataset"]
-        weight = self._lumi * self._xsecs[dataset] / len(events)
+        weight = events["weight"] * events["lumiWeight"]
+        norm = self._lumi * self._xsecs[dataset] / ak.sum(weight) if ak.sum(weight) != 0 else 0
+        evt_weight = weight * norm
 
-        # --- object selections ---
-        muons = select_muons(events.Muon)
-        jets  = select_jets(events.Jet)
-        met   = compute_met(events)
-
-        # --- example SR: Z->mumu + MET ---
+        # channel: Z→μμ
+        muons = select_muons(events)
         two_mu = (ak.num(muons) == 2)
-        mll    = (ak.firsts((muons[:,0] + muons[:,1]).mass))
-        z_window = (mll > 80) & (mll < 100)
-        met_cut  = (met.pt > 100)
+        z_window = (events["di_muon_mass"] > self._sel["z_mass_min"]) & (
+            events["di_muon_mass"] < self._sel["z_mass_max"]
+        )
+        met_cut = events["MET"] > self._sel["met_min"]
 
         sr_sel = two_mu & z_window & met_cut
-        sr_yield = ak.sum(sr_sel) * weight
 
-        # --- store ---
+        # yields
+        sr_yield = ak.sum(evt_weight[sr_sel])
+
         out = self.accumulator.identity()
         out["yields"][dataset] = sr_yield
         out["cutflow"][dataset] = {
