@@ -1,29 +1,28 @@
-# scripts/run_counting.py
-
 import yaml
-from coffea import processor, nanoevents
-from coffea.nanoevents import NanoAODSchema  # or your schema
+from coffea import processor
+import uproot
 
 from higgs_to_invisible.processors.counting_processor import CountingProcessor
 
 def main():
-    # load configs
     with open("coffea_config/samples.yml") as f:
         samples = yaml.safe_load(f)
-    with open("coffea_config/xsecs.yml") as f:
-        xsecs = yaml.safe_load(f)
+    with open("coffea_config/selections.yml") as f:
+        selections = yaml.safe_load(f)
 
-    lumi = 5_000  # fb^-1, adjust
+    lumi = 5000  # fb^-1
+    xsecs = {s: samples[s]["xsec"] for s in samples}
 
     fileset = {s: {"files": [samples[s]["path"]]} for s in samples}
 
-    proc = CountingProcessor(lumi=lumi, xsecs=xsecs)
+    proc = CountingProcessor(lumi=lumi, xsecs=xsecs, selection_cfg=selections)
+
     out = processor.run_uproot_job(
         fileset,
-        treename="events",   # adjust to your ntuple tree name
+        treename="tree",   # your tree is called "tree"
         processor_instance=proc,
         executor=processor.FuturesExecutor(),
-        chunksize=500_000,
+        chunksize=200_000,
     )
 
     print("Yields:")
