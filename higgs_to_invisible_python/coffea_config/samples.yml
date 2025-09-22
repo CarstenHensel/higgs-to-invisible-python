@@ -1,0 +1,6 @@
+SignalZH:
+  path: /path/to/ZH_Hinv.root
+  xsec: 0.05    # pb, adjust
+BackgroundZZ:
+  path: /path/to/ZZ.root
+  xsec: 1.0
