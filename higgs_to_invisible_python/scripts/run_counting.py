@@ -1,33 +1,54 @@
+#!/usr/bin/env python
 import yaml
-from coffea import processor
-import uproot
+from coffea.processor import run_uproot_job
+from coffea.nanoevents import NanoAODSchema
+from counting_processor import CountingProcessor
+import os
 
-from higgs_to_invisible.processors.counting_processor import CountingProcessor
+# -----------------------------
+# User configuration
+# -----------------------------
+LUMI = 5e3  # /fb
+XSECS = {
+    "SignalZH": 0.2,       # pb
+    "BackgroundZZ": 0.5,
+    "BackgroundWW": 0.6,
+}
 
-def main():
-    with open("coffea_config/samples.yml") as f:
-        samples = yaml.safe_load(f)
-    with open("coffea_config/selections.yml") as f:
-        selections = yaml.safe_load(f)
+FILES = {
+    "SignalZH": ["ntuples/signal_*.root"],
+    "BackgroundZZ": ["ntuples/bkg_zz_*.root"],
+    "BackgroundWW": ["ntuples/bkg_ww_*.root"],
+}
 
-    lumi = 5000  # fb^-1
-    xsecs = {s: samples[s]["xsec"] for s in samples}
+PROCESSOR_EXECUTOR = "futures"
+EXECUTOR_ARGS = {"workers": 4, "schema": NanoAODSchema}
 
-    fileset = {s: {"files": [samples[s]["path"]]} for s in samples}
+# -----------------------------
+# Load selections from YAML
+# -----------------------------
+with open("coffea_config/selections.yml") as f:
+    selection_cfg = yaml.safe_load(f)
 
-    proc = CountingProcessor(lumi=lumi, xsecs=xsecs, selection_cfg=selections)
+# -----------------------------
+# Instantiate the processor
+# -----------------------------
+processor = CountingProcessor(
+    lumi=LUMI,
+    xsecs=XSECS,
+    selection_cfg=selection_cfg,
+    output_file="yields.json"
+)
 
-    out = processor.run_uproot_job(
-        fileset,
-        treename="tree",   # your tree is called "tree"
-        processor_instance=proc,
-        executor=processor.FuturesExecutor(),
-        chunksize=200_000,
-    )
+# -----------------------------
+# Run the coffea job
+# -----------------------------
+output = run_uproot_job(
+    fileset=FILES,
+    treename="tree",
+    processor_instance=processor,
+    executor=PROCESSOR_EXECUTOR,
+    executor_args=EXECUTOR_ARGS,
+)
 
-    print("Yields:")
-    for ds, yld in out["yields"].items():
-        print(f"{ds}: {yld:.2f}")
-
-if __name__ == "__main__":
-    main()
+print("Counting finished. Yields written to yields.json")
