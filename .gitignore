@@ -1,0 +1,110 @@
+# =====================================
+# Python cache and compiled files
+# =====================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =====================================
+# Jupyter notebook checkpoints
+# =====================================
+.ipynb_checkpoints/
+
+# =====================================
+# Virtual environments
+# =====================================
+.env
+.venv
+venv/
+env/
+ENV/
+*.env
+
+# =====================================
+# Build and packaging
+# =====================================
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+*.egg
+
+# =====================================
+# Logs and temporary files
+# =====================================
+*.log
+*.out
+*.err
+*.tmp
+*.temp
+*.bak
+*~
+*.swp
+*.swo
+
+# =====================================
+# Coffea / uproot / HEP analysis outputs
+# =====================================
+# (Root files, NanoAODs, histograms, temporary data, etc.)
+*.root
+*.parquet
+*.coffea
+*.json.gz
+*.yaml~
+output/
+results/
+plots/
+figures/
+tmp/
+cache/
+
+# =====================================
+# IDE / editor files
+# =====================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# =====================================
+# OS-specific files
+# =====================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =====================================
+# Python testing / coverage
+# =====================================
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+pytest_cache/
+
+# =====================================
+# Project-specific generated files
+# =====================================
+# (e.g. datacards, combined statistical outputs)
+datacards/
+combine/
+workspace/
+fitdiagnostics/
+*.root.gz
+*.pkl
+*.pkl.gz
+
+# =====================================
+# Notebooks and data exploration
+# =====================================
+notebooks/*-checkpoint.ipynb
+notebooks/.ipynb_checkpoints/
+notebooks/output/
+notebooks/figures/
+
+# =====================================
+# Local configuration overrides
+# =====================================
+config_local.yml
+*.local.yml
