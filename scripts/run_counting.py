@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import yaml
-from coffea.processor import run_uproot_job
+from coffea.processor import Runner, futures_executor, processor
 from coffea.nanoevents import NanoAODSchema
 from counting_processor import CountingProcessor
 import os
